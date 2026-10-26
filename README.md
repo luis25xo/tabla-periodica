@@ -65,6 +65,14 @@ Con la preferencia del sistema de **movimiento reducido**, el mostrador empieza 
 
 El nombre visible se define en un solo lugar: el campo **`productName`** de `package.json`. Lo usan electron-builder (nombre del ejecutable e instaladores), el proceso principal (`app.getName()`) y el título de la ventana (inyectado en el renderer por Vite como `__PRODUCT_NAME__`).
 
+## Versión web (GitHub Pages)
+
+El juego también funciona en el navegador: **https://luis25xo.github.io/tabla-periodica/**
+
+- Cada `push` a la rama `main` ejecuta el workflow [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml): comprueba los tipos, pasa las pruebas unitarias, compila la web (`npm run build:renderer`) y la publica en GitHub Pages. También se puede lanzar a mano desde la pestaña *Actions*.
+- Para probar la versión web en local: `npm run build:renderer` y `npx vite preview` (http://localhost:4173). No se puede abrir `dist/index.html` con doble clic, porque los navegadores bloquean los módulos JavaScript cargados desde archivos locales.
+- En el navegador el progreso se guarda en el `localStorage` del sitio, separado del de la aplicación de escritorio.
+
 ## Instaladores
 
 Los instaladores se generan en `release/`. electron-builder necesita conexión a Internet **durante la compilación** para descargar Electron y las herramientas de empaquetado; la aplicación instalada funciona sin conexión.
