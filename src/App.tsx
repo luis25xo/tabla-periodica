@@ -133,6 +133,7 @@ export function App() {
         </header>
 
         <main className="table-area">
+          <p className="rotate-hint">Desliza la tabla para ver todos los grupos, o gira el teléfono para verla más grande.</p>
           {state.placementMode && selectedName && (
             <p className="placement-banner" role="status">
               Elige la casilla de <strong>{selectedName}</strong>: haz clic o usa las flechas e Intro. Escape para cancelar.

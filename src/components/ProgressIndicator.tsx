@@ -11,7 +11,9 @@ export const ProgressIndicator = memo(function ProgressIndicator({ placed, total
   return (
     <div className="progress" data-testid="progress">
       <p className="progress-label">
-        Elementos colocados: <strong data-testid="placed-count">{placed}</strong> de <span data-testid="total-count">{total}</span>
+        <span className="progress-label-long">Elementos colocados:</span>
+        <span className="progress-label-short">Colocados:</span> <strong data-testid="placed-count">{placed}</strong> de{' '}
+        <span data-testid="total-count">{total}</span>
       </p>
       <div
         className="progress-bar"

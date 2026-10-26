@@ -33,10 +33,20 @@ export class ConveyorModel {
 
   constructor(
     /** Paso entre fichas: ancho de ficha + separación. */
-    public readonly slot: number,
+    public slot: number,
     /** Ancho visible de la cinta. */
     public viewport: number,
   ) {}
+
+  /** Cambia el paso entre fichas (p. ej. fichas más pequeñas en un teléfono) conservando el orden. */
+  setSlot(slot: number): void {
+    if (!(slot > 0) || slot === this.slot) return;
+    const ratio = slot / this.slot;
+    for (const t of this.tiles) t.x *= ratio;
+    this.pendingShift *= ratio;
+    this.slot = slot;
+    this.wrap();
+  }
 
   get ids(): ElementId[] {
     return this.tiles.map((t) => t.id);

@@ -28,6 +28,12 @@ interface Props {
 }
 
 const MIN_CELL = 52;
+/** En pantallas pequeñas (teléfonos) se permiten casillas algo menores; la tabla se desplaza. */
+const MIN_CELL_COMPACT = 44;
+
+function minCellSize(): number {
+  return window.innerWidth < 900 || window.innerHeight < 560 ? MIN_CELL_COMPACT : MIN_CELL;
+}
 const MAX_CELL = 104;
 const GAP = 4;
 
@@ -43,7 +49,7 @@ function useCellSize(ref: RefObject<HTMLElement | null>): number {
       // 18 grupos + columna de períodos (0,5) y 7 períodos + fila de grupos (0,5).
       const byWidth = (width - GAP * GROUPS) / (GROUPS + 0.5);
       const byHeight = (height - GAP * PERIODS) / (PERIODS + 0.5);
-      const next = Math.floor(Math.max(MIN_CELL, Math.min(MAX_CELL, byWidth, byHeight)));
+      const next = Math.floor(Math.max(minCellSize(), Math.min(MAX_CELL, byWidth, byHeight)));
       setSize((prev) => (prev === next ? prev : next));
     };
     measure();

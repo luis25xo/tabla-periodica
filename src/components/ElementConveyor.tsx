@@ -149,7 +149,12 @@ export const ElementConveyor = memo(function ElementConveyor({
     const el = viewportRef.current;
     if (!el) return;
     const measure = () => {
-      modelRef.current!.viewport = Math.max(SLOT, el.clientWidth);
+      const model = modelRef.current!;
+      // El ancho de ficha lo define el CSS (--tile-w), más pequeño en pantallas estrechas.
+      const cssWidth = parseFloat(getComputedStyle(el).getPropertyValue('--tile-w'));
+      model.setSlot((cssWidth > 0 ? cssWidth : TILE_WIDTH) + TILE_GAP);
+      model.viewport = Math.max(model.slot, el.clientWidth);
+      applyPositions();
     };
     measure();
     if (typeof ResizeObserver === 'undefined') {
@@ -158,8 +163,12 @@ export const ElementConveyor = memo(function ElementConveyor({
     }
     const ro = new ResizeObserver(measure);
     ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
+    window.addEventListener('resize', measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [applyPositions]);
 
   // Bucle de animación. Siempre activo para cerrar huecos y aplicar desplazamientos manuales.
   useEffect(() => {
@@ -323,7 +332,7 @@ export const ElementConveyor = memo(function ElementConveyor({
         </span>
         <span className="belt-toggle-label">{paused ? 'Reanudar' : 'Detener'}</span>
       </button>
-      <button type="button" className="belt-nav" aria-label="Desplazar el mostrador hacia la derecha" onClick={() => nudge(SLOT * 3)}>
+      <button type="button" className="belt-nav" aria-label="Desplazar el mostrador hacia la derecha" onClick={() => nudge(modelRef.current!.slot * 3)}>
         ‹
       </button>
       <div
@@ -353,7 +362,7 @@ export const ElementConveyor = memo(function ElementConveyor({
         </ul>
         {beltIds.length === 0 && <p className="belt-empty">No quedan fichas en el mostrador.</p>}
       </div>
-      <button type="button" className="belt-nav" aria-label="Desplazar el mostrador hacia la izquierda" onClick={() => nudge(-SLOT * 3)}>
+      <button type="button" className="belt-nav" aria-label="Desplazar el mostrador hacia la izquierda" onClick={() => nudge(-modelRef.current!.slot * 3)}>
         ›
       </button>
     </div>

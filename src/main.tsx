@@ -6,6 +6,7 @@ import './styles/table.css';
 import './styles/conveyor.css';
 import './styles/card.css';
 import './styles/dialogs.css';
+import './styles/mobile.css';
 import { App } from './App';
 
 const root = document.getElementById('root');

@@ -43,6 +43,18 @@ interface Options {
   getReturnRect: () => DOMRect | null;
 }
 
+/** Margen (px) junto al borde de la tabla en el que se desplaza sola durante el arrastre. */
+const AUTOSCROLL_EDGE = 56;
+const AUTOSCROLL_MAX_SPEED = 14;
+
+/** Velocidad de autodesplazamiento en un eje: negativa cerca del inicio, positiva cerca del final. */
+function edgeSpeed(pos: number, start: number, end: number): number {
+  if (pos < start || pos > end) return 0;
+  if (pos < start + AUTOSCROLL_EDGE) return -Math.ceil(((start + AUTOSCROLL_EDGE - pos) / AUTOSCROLL_EDGE) * AUTOSCROLL_MAX_SPEED);
+  if (pos > end - AUTOSCROLL_EDGE) return Math.ceil(((pos - (end - AUTOSCROLL_EDGE)) / AUTOSCROLL_EDGE) * AUTOSCROLL_MAX_SPEED);
+  return 0;
+}
+
 function dropCellAt(x: number, y: number): HTMLElement | null {
   const el = document.elementFromPoint(x, y);
   return el instanceof Element ? el.closest<HTMLElement>('[data-drop-cell="true"]') : null;
@@ -114,6 +126,26 @@ export function useDragAndDrop(options: Options) {
       const pointerId = event.pointerId;
       let started = false;
       let hovered: HTMLElement | null = null;
+      let pointer = { x: startX, y: startY };
+      let scrollFrame = 0;
+
+      // Mientras se arrastra cerca del borde de la tabla, esta se desplaza sola
+      // (imprescindible en pantallas pequeñas, donde la tabla no cabe entera).
+      const autoScroll = () => {
+        const scroller = document.querySelector<HTMLElement>('.table-scroll');
+        if (scroller) {
+          const r = scroller.getBoundingClientRect();
+          const inside = pointer.y >= r.top && pointer.y <= r.bottom;
+          const vx = inside ? edgeSpeed(pointer.x, r.left, r.right) : 0;
+          const vy = pointer.x >= r.left && pointer.x <= r.right ? edgeSpeed(pointer.y, r.top, r.bottom) : 0;
+          if (vx || vy) {
+            const before = scroller.scrollLeft + scroller.scrollTop;
+            scroller.scrollBy(vx, vy);
+            if (scroller.scrollLeft + scroller.scrollTop !== before) setHover(dropCellAt(pointer.x, pointer.y));
+          }
+        }
+        scrollFrame = requestAnimationFrame(autoScroll);
+      };
 
       const setHover = (cell: HTMLElement | null) => {
         if (cell === hovered) return;
@@ -136,8 +168,10 @@ export function useDragAndDrop(options: Options) {
           window.clearTimeout(finishTimer.current);
           optionsRef.current.onDragStart(id);
           setGhost({ id, ...optionsRef.current.getFace(id), width: rect.width, height: rect.height, seq: ++ghostSeq.current });
+          scrollFrame = requestAnimationFrame(autoScroll);
         }
         e.preventDefault();
+        pointer = { x: e.clientX, y: e.clientY };
         position.current = { x: e.clientX - grabX, y: e.clientY - grabY };
         applyPosition();
         setHover(dropCellAt(e.clientX, e.clientY));
@@ -171,6 +205,7 @@ export function useDragAndDrop(options: Options) {
       const blur = () => finish(null, true);
 
       function cleanup() {
+        cancelAnimationFrame(scrollFrame);
         window.removeEventListener('pointermove', move);
         window.removeEventListener('pointerup', up);
         window.removeEventListener('pointercancel', cancel);

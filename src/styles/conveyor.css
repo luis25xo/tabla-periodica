@@ -173,7 +173,7 @@
   align-items: center;
   justify-content: center;
   gap: 1px;
-  width: 136px;
+  width: var(--tile-w, 136px);
   height: 64px;
   padding: 0 10px;
   border-radius: var(--radius);

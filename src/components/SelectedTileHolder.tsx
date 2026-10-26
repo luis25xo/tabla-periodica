@@ -26,7 +26,7 @@ export const SelectedTileHolder = memo(function SelectedTileHolder({
   const element = selectedId ? getElement(selectedId) : undefined;
 
   return (
-    <section className="holder" aria-label="Ficha seleccionada" data-testid="holder">
+    <section className={`holder${element ? '' : ' holder--empty'}`} aria-label="Ficha seleccionada" data-testid="holder">
       {element ? (
         <>
           <button

@@ -72,6 +72,11 @@ El juego también funciona en el navegador: **https://luis25xo.github.io/tabla-p
 - Cada `push` a la rama `main` ejecuta el workflow [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml): comprueba los tipos, pasa las pruebas unitarias, compila la web (`npm run build:renderer`) y la publica en GitHub Pages. También se puede lanzar a mano desde la pestaña *Actions*.
 - Para probar la versión web en local: `npm run build:renderer` y `npx vite preview` (http://localhost:4173). No se puede abrir `dist/index.html` con doble clic, porque los navegadores bloquean los módulos JavaScript cargados desde archivos locales.
 - En el navegador el progreso se guarda en el `localStorage` del sitio, separado del de la aplicación de escritorio.
+- **Teléfonos y tabletas** ([src/styles/mobile.css](src/styles/mobile.css)):
+  - *Vertical*: cabecera en dos filas con botones de icono, carrusel a todo el ancho con fichas más pequeñas y el panel de la ficha seleccionada solo cuando hay una. La tabla conserva la proporción de las casillas y se desliza con el dedo.
+  - *Horizontal*: cabecera en una sola fila compacta, carrusel más bajo y tarjeta con los botones al lado.
+  - Al arrastrar una ficha cerca del borde de la tabla, esta se desplaza sola para llegar a las casillas que no se ven. También se puede colocar sin arrastrar: tocar la ficha, cerrar la tarjeta y tocar la casilla.
+  - `tests/e2e/mobile.spec.ts` lo comprueba con Google Chrome emulando un Pixel 7 (se omite si Chrome no está instalado).
 
 ## Instaladores
 

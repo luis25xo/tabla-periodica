@@ -41,7 +41,8 @@ export interface NameLayout {
 export function layoutName(name: string, cellSize: number): NameLayout {
   const available = cellSize - 8;
   // El nombre comparte la casilla con el símbolo químico, que ocupa la parte superior.
-  const maxSize = Math.min(cellSize * 0.15, 14);
+  // En casillas pequeñas (teléfonos) se mantiene un mínimo legible de 8,5 px si cabe a lo ancho.
+  const maxSize = Math.min(Math.max(cellSize * 0.15, 8.5), 14);
   const oneLine = Math.min(maxSize, available / (name.length * CHAR_EM));
   if (oneLine >= MIN_ONE_LINE_PX) return { lines: [name], fontSize: oneLine };
   const parts = splitName(name);
