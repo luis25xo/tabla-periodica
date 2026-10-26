@@ -1,0 +1,140 @@
+.dialog {
+  width: min(560px, 100%);
+  padding: 28px 32px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid #e3e7ec;
+  outline: none;
+  animation: card-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dialog-title {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.dialog-text {
+  margin: 0 0 14px;
+  color: var(--ink-soft);
+}
+
+.dialog-text--big {
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.instructions {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+
+.dialog--complete {
+  text-align: center;
+}
+
+.dialog--complete .dialog-actions {
+  justify-content: center;
+}
+
+/* Átomo decorativo de la pantalla final. */
+.complete-atom {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 14px;
+  background: radial-gradient(circle, var(--proton) 0 7px, transparent 7.5px);
+}
+
+.complete-atom span {
+  position: absolute;
+  inset: 0 18px;
+  border: 2px solid rgba(44, 99, 214, 0.55);
+  border-radius: 50%;
+  animation: orbit 6s linear infinite;
+}
+
+.complete-atom span:nth-child(2) {
+  transform: rotate(60deg);
+  animation: orbit-60 7s linear infinite;
+}
+
+.complete-atom span:nth-child(3) {
+  transform: rotate(120deg);
+  animation: orbit-120 8s linear infinite;
+}
+
+@keyframes orbit-60 {
+  from {
+    transform: rotate(60deg);
+  }
+  to {
+    transform: rotate(420deg);
+  }
+}
+
+@keyframes orbit-120 {
+  from {
+    transform: rotate(120deg);
+  }
+  to {
+    transform: rotate(480deg);
+  }
+}
+
+/* Partículas discretas que ascienden al completar la tabla. */
+.sparks {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.spark {
+  position: absolute;
+  bottom: -12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: spark-rise linear infinite;
+}
+
+.spark--0 {
+  background: var(--proton);
+}
+.spark--1 {
+  background: var(--neutron);
+}
+.spark--2 {
+  background: var(--electron);
+}
+
+@keyframes spark-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-105vh);
+    opacity: 0;
+  }
+}

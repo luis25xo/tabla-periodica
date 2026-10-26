@@ -1,0 +1,262 @@
+.table-scroll {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  padding: 8px 12px;
+}
+
+.periodic-grid {
+  margin: auto;
+  display: grid;
+  grid-template-columns: calc(var(--cell) * 0.5) repeat(18, var(--cell));
+  grid-template-rows: calc(var(--cell) * 0.5) repeat(7, var(--cell));
+  gap: var(--gap);
+  flex: none;
+}
+
+.axis-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: #9aa3ae;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.axis-label--group {
+  align-items: flex-end;
+  padding-bottom: 3px;
+}
+
+.axis-label--period {
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: var(--radius-sm);
+}
+
+.cell--gap {
+  pointer-events: none;
+}
+
+/* Posición reservada a las series f excluidas: vacía, sin etiqueta y no interactiva. */
+.cell--reserved {
+  border: 1px dashed rgba(150, 160, 172, 0.28);
+  pointer-events: none;
+}
+
+.cell--playable {
+  position: relative;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.72);
+  cursor: default;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.cell--targetable {
+  cursor: pointer;
+}
+
+.cell--targetable:hover,
+.periodic-grid.is-placing .cell--playable:not(.cell--filled):focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.periodic-grid.is-placing .cell--playable:not(.cell--filled) {
+  border-style: dashed;
+  border-color: #a9bde3;
+}
+
+.cell--playable.is-drop-hover:not(.cell--filled) {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 4px rgba(44, 99, 214, 0.14);
+}
+
+.cell--playable.is-drop-hover.cell--filled {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(201, 60, 60, 0.12);
+}
+
+.cell--filled {
+  background: linear-gradient(160deg, #ffffff 0%, #f1f7f4 100%);
+  border-color: #9fd2b9;
+  box-shadow: var(--shadow-sm);
+}
+
+.cell-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  animation: name-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cell-symbol {
+  display: block;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+.cell-name {
+  display: block;
+  padding: 0 3px;
+  font-weight: 550;
+  color: var(--ink-soft);
+  text-align: center;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.cell-name-line {
+  display: block;
+}
+
+/* Guion visual al partir un nombre largo en dos líneas (no forma parte del texto). */
+.cell-name-line--hyphen::after {
+  content: '-';
+}
+
+@keyframes name-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Acierto: pulso breve. Se alternan dos nombres de animación para poder repetirla. */
+.cell--correct-0 {
+  animation: cell-pop-a 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cell--correct-1 {
+  animation: cell-pop-b 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes cell-pop-a {
+  0% {
+    transform: scale(0.9);
+  }
+  55% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes cell-pop-b {
+  0% {
+    transform: scale(0.9);
+  }
+  55% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* Error: sacudida breve. */
+.cell--incorrect-0,
+.cell--occupied-0 {
+  animation: cell-shake-a 0.42s ease;
+}
+.cell--incorrect-1,
+.cell--occupied-1 {
+  animation: cell-shake-b 0.42s ease;
+}
+
+@keyframes cell-shake-a {
+  0%,
+  100% {
+    transform: none;
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+@keyframes cell-shake-b {
+  0%,
+  100% {
+    transform: none;
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.cell-flash {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  animation: flash 0.9s ease;
+}
+
+.cell-flash--correct {
+  background: radial-gradient(circle, rgba(23, 136, 93, 0.35), rgba(23, 136, 93, 0) 70%);
+  box-shadow: inset 0 0 0 2px var(--success);
+}
+
+.cell-flash--incorrect,
+.cell-flash--occupied {
+  background: rgba(201, 60, 60, 0.16);
+  box-shadow: inset 0 0 0 2px var(--error);
+}
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.periodic-grid.is-complete .cell--filled {
+  animation: complete-glow 2.6s ease-in-out 2;
+}
+
+@keyframes complete-glow {
+  0%,
+  100% {
+    box-shadow: var(--shadow-sm);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(23, 136, 93, 0.25),
+      0 4px 14px rgba(23, 136, 93, 0.18);
+  }
+}
